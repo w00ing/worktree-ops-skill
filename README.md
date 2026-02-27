@@ -2,7 +2,7 @@
 
 Git worktree operations skill for creating worktrees and syncing local-only files safely.
 
-[![license](https://img.shields.io/github/license/monymony/worktree-ops-skill)](https://github.com/monymony/worktree-ops-skill/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/w00ing/worktree-ops-skill)](https://github.com/w00ing/worktree-ops-skill/blob/main/LICENSE)
 
 ## Features
 
@@ -15,19 +15,19 @@ Git worktree operations skill for creating worktrees and syncing local-only file
 
 Codex (skill-installer UI):
 - Run `$skill-installer`
-- Ask: install GitHub repo `monymony/worktree-ops-skill` path `worktree-ops`
+- Ask: install GitHub repo `w00ing/worktree-ops-skill` path `worktree-ops`
 
 Manual (Codex):
 ```bash
 mkdir -p ~/.codex/skills
-git clone https://github.com/monymony/worktree-ops-skill.git /tmp/worktree-ops-skill
+git clone https://github.com/w00ing/worktree-ops-skill.git /tmp/worktree-ops-skill
 rsync -a /tmp/worktree-ops-skill/skills/worktree-ops/ ~/.codex/skills/worktree-ops/
 ```
 
 Manual (Claude Code):
 ```bash
 mkdir -p ~/.claude/skills
-git clone https://github.com/monymony/worktree-ops-skill.git /tmp/worktree-ops-skill
+git clone https://github.com/w00ing/worktree-ops-skill.git /tmp/worktree-ops-skill
 rsync -a /tmp/worktree-ops-skill/skills/worktree-ops/ ~/.claude/skills/worktree-ops/
 ```
 
