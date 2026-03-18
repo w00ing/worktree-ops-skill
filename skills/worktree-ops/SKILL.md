@@ -7,7 +7,10 @@ description: "Manage Git worktrees: create worktrees, sync local-only files via 
 
 ## Quick start
 
-- Create worktree (required when skill used): `git worktree add <path> <branch>` (or `-b <branch> <start-point>`)
+- Standard layout: keep main clones wherever they already live, and keep worktrees under `$HOME/worktrees/<repo>/<branch>`
+- Create worktree (preferred when skill used): `./scripts/worktree-add.sh <branch> [start-point]`
+- Create worktree at an explicit path: `./scripts/worktree-add.sh <branch> [start-point] --path /custom/path`
+- Raw git equivalent: `git worktree add "$HOME/worktrees/<repo>/<branch>" <branch>` (or `-b <branch> <path> <start-point>`)
 - Sync local-only files: copy `scripts/worktree-include.sh` from this skill into repo, then run `./scripts/worktree-include.sh`
 - Optional wrapper: copy `scripts/worktree-add.sh` from this skill into repo
 - Optional hook: copy `scripts/husky-post-checkout.sh` to `.husky/post-checkout`
@@ -21,10 +24,13 @@ description: "Manage Git worktrees: create worktrees, sync local-only files via 
 
 ## Conventions
 
-- When this skill is invoked, create a new worktree by default. If path/branch not specified, ask for them.
+- When this skill is invoked, create a new worktree under `$HOME/worktrees/<repo>/<branch>` by default. If only a raw `git worktree add` command is used, keep that same layout.
+- Keep the main checkout outside the worktree root; do not nest worktrees inside another repository's working tree.
+- Repositories that also appear as submodules should still keep their own worktrees under `$HOME/worktrees`, not under the parent superproject checkout.
 - Keep local-only secrets/configs out of git; list in `.worktreeinclude`
 - Prefer `copy` for env/profiles/keys; use `symlink` only when safe
 - Use hook behavior: `.husky/post-checkout` runs include once on fresh worktree (hook file stored in this skill)
+- Branch names with `/` map to nested directories under the repo folder. This is intentional and keeps grouped branches easy to scan.
 
 ## Details
 
@@ -38,5 +44,9 @@ description: "Manage Git worktrees: create worktrees, sync local-only files via 
   - copy/symlink from main to current worktree
   - skip if src missing or dest exists
 - `scripts/worktree-add.sh`:
+  - default root is `$HOME/worktrees`
+  - derive the repo directory name from the current git root
+  - create `$HOME/worktrees/<repo>/<branch>` when no explicit path is provided
+  - preserve `/` in branch names so grouped directories like `feature/foo` remain grouped on disk
   - `git worktree add -b` if start-point provided
   - run include script in new worktree

@@ -1,14 +1,52 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ $# -lt 2 ]; then
-  echo "Usage: $(basename "$0") <path> <branch> [start-point]" >&2
+usage() {
+  echo "Usage: $(basename "$0") <branch> [start-point] [--path <path>]" >&2
+  echo "Defaults to \$HOME/worktrees/<repo>/<branch> when --path is not provided." >&2
+}
+
+if [ $# -lt 1 ]; then
+  usage
   exit 1
 fi
 
-worktree_path="$1"
-branch="$2"
-start_point="${3:-}"
+branch="$1"
+shift
+start_point=""
+worktree_path=""
+
+if [ $# -gt 0 ] && [ "$1" != "--path" ]; then
+  start_point="$1"
+  shift
+fi
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+  --path)
+    if [ $# -lt 2 ]; then
+      usage
+      exit 1
+    fi
+    worktree_path="$2"
+    shift 2
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+repo_root=$(git rev-parse --show-toplevel)
+repo_name=$(basename "$repo_root")
+worktree_root="${WORKTREE_ROOT:-$HOME/worktrees}"
+
+if [ -z "$worktree_path" ]; then
+  worktree_path="$worktree_root/$repo_name/$branch"
+fi
+
+mkdir -p "$(dirname "$worktree_path")"
 
 if [ -n "$start_point" ]; then
   git worktree add -b "$branch" "$worktree_path" "$start_point"
